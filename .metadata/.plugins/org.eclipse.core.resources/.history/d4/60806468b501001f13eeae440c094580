@@ -1,0 +1,56 @@
+package com.mail.Controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.mail.DTO.customResponse;
+import com.mail.DTO.mailRequest;
+import com.mail.services.serviceImp;
+
+import jakarta.mail.Multipart;
+
+@RestController
+@RequestMapping("/api/email/")
+public class controller {
+
+	@Autowired
+	serviceImp service;
+
+	@PostMapping("/send")
+	public ResponseEntity<customResponse> sendMail(@RequestBody mailRequest request) {
+		service.sendMail(request.getTo(), request.getSubject(), request.getMessage());
+		customResponse c = new customResponse();
+		c.setMessage("Email Sent Successfully");
+		c.setStatus(true);
+		c.setHttpRequest(HttpStatus.OK);
+		return ResponseEntity.ok(c);
+	}
+	
+	@PostMapping("/sendEmailWithHtml")  
+	public ResponseEntity<customResponse> sendEmailWithHtml(@RequestBody mailRequest request) {
+		service.sendMail(request.getTo(), request.getSubject(), request.getMessage());
+		customResponse c = new customResponse();
+		c.setMessage("Email Sent Successfully");
+		c.setStatus(true);
+		c.setHttpRequest(HttpStatus.OK);
+		return ResponseEntity.ok(c); 
+	}
+	
+	@PostMapping("/sendEmailWithFile") 
+	public ResponseEntity<?> sendEmailWithFile(@RequestBody mailRequest request,@RequestParam Multipart file){
+	
+		service.sendEmailWithFile(request.getTo(), request.getSubject(), request.getMessage(), file.getInputStream());
+		 
+		customResponse c = new customResponse();
+		c.setMessage("Email Sent Successfully");
+		c.setStatus(true);
+		c.setHttpRequest(HttpStatus.OK);
+		return ResponseEntity.ok(c);
+	}
+}
